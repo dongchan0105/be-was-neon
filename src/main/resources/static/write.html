@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>글쓰기</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./reset.css" rel="stylesheet" />
+    <link href="./global.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <!-- HEADER_CONTENT -->
+    </header>
+    <div class="page">
+        <h2 class="page-title">글쓰기</h2>
+        <form method="POST" action="/write">
+            <div class="textfield textfield_size_s">
+                <label for="title" class="title_textfield">제목</label>
+                <input
+                        id="title"
+                        class="input_textfield"
+                        name="title"
+                        placeholder="제목을 입력해주세요"
+                        required
+                />
+            </div>
+            <div class="textfield textfield_size_s">
+                <label for="content" class="title_textfield">내용</label>
+                <textarea
+                        id="content"
+                        class="input_textfield"
+                        name="content"
+                        rows="10"
+                        placeholder="내용을 입력해주세요"
+                        required
+                ></textarea>
+            </div>
+            <button class="btn btn_contained btn_size_m" type="submit" style="margin-top: 24px;">
+                등록하기
+            </button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

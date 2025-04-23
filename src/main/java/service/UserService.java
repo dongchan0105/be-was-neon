@@ -10,10 +10,6 @@ import java.util.List;
 public class UserService {
 
 
-    public UserService() {
-    }
-
-
     public static User createUser(UserCreateRequest request) {
 
         User user = new User(request.userId(), request.password(), request.name(), request.email());
@@ -24,7 +20,7 @@ public class UserService {
     }
 
     public static List<User> getAllUsers() {
-       return new ArrayList<>(Database.findAll());
+       return new ArrayList<>(Database.findAllUser());
     }
 
 

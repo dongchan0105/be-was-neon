@@ -1,5 +1,6 @@
-package handler;
+package handler.user;
 
+import handler.ReturnViewPathHandler;
 import model.User;
 import service.UserService;
 

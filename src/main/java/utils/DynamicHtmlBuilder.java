@@ -20,9 +20,12 @@ public class DynamicHtmlBuilder {
 
         // 2. 동적 헤더 생성
         String headerContent = buildHeader(user);
+        String writeButtonContent = buildWriteButton(user);
 
         // 3. 템플릿에 동적 컨텐츠 삽입
-        String html = template.replace("<!-- HEADER_CONTENT -->", headerContent);
+        String html = template
+                .replace("<!-- HEADER_CONTENT -->", headerContent)
+                .replace("<!-- WRITE_BUTTON -->", writeButtonContent);
 
         return html.getBytes(StandardCharsets.UTF_8);
     }
@@ -48,6 +51,22 @@ public class DynamicHtmlBuilder {
             header.append("</ul>");
         }
         return header.toString();
+    }
+
+    private static String buildWriteButton(User user) {
+        StringBuilder button = new StringBuilder();
+        button.append("<div class='write-btn-area' style='margin-top: 24px;'>");
+
+        if (user != null) {
+            // 로그인 사용자: 글쓰기 가능
+            button.append("<a class='btn btn_contained btn_size_m' href='/write'>글쓰기</a>");
+        } else {
+            // 비로그인 사용자: 로그인 페이지로 이동
+            button.append("<a class='btn btn_contained btn_size_m' href='/login'>글쓰기</a>");
+        }
+
+        button.append("</div>");
+        return button.toString();
     }
 
     private static String readFile(String filename) throws IOException {
