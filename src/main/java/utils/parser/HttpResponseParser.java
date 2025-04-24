@@ -1,8 +1,10 @@
 package utils.parser;
 
+import db.Database;
 import dto.HttpResponse;
 import frontHandler.ModelView;
 import handler.StaticRequestHandler;
+import model.Article;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +13,7 @@ import utils.DynamicHtmlBuilder;
 import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 import static session.SessionManager.SESSION_COOKIE_NAME;
@@ -44,9 +47,13 @@ public class HttpResponseParser {
         // 로그인 상태에 따른 동적 HTML 생성
         if ("dynamic/index".equals(viewPath)) {
             log.debug("viewPath = {}", viewPath);
-            // 모델에서 사용자 정보 확인
+
+            // 모델과 article 정보확인
             User user = (User) model.get("user");
-            byte[] htmlBody = DynamicHtmlBuilder.buildIndexPage(user);
+            List<Article> articles = Database.findAllArticle();
+
+
+            byte[] htmlBody = DynamicHtmlBuilder.buildIndexPage(user,articles);
             response.setStatusCode(200);
             response.setStatusText("OK");
             response.setContentType("text/html;charset=utf-8");

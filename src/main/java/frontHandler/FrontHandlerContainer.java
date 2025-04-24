@@ -2,6 +2,7 @@ package frontHandler;
 
 import dto.HttpResponse;
 import dto.RouteKey;
+import frontHandler.adapter.HandlerAdapter;
 import frontHandler.adapter.ReturnViewPathAdapter;
 import handler.*;
 import handler.user.UserListHandler;
@@ -45,6 +46,7 @@ public class FrontHandlerContainer implements Runnable {
         handlerMappingMap.put(new RouteKey("/user/list", "GET"), new UserListHandler());
         handlerMappingMap.put(new RouteKey("/", "GET"), new IndexHandler());
         handlerMappingMap.put(new RouteKey("/index", "GET"), new IndexHandler());
+        handlerMappingMap.put(new RouteKey("/write","POST"),new ArticleWriteHandler());
     }
 
     private void initHandlerAdapters() {
@@ -77,6 +79,8 @@ public class FrontHandlerContainer implements Runnable {
 
         // 2. 어댑터 조회
         HandlerAdapter adapter = getHandlerAdapter(handler);
+
+        logger.info("handler: {}, adapter: {}", handler, adapter);
 
         if (adapter != null) {
             logger.warn("using handler adapter {}", handler.getClass().getName());

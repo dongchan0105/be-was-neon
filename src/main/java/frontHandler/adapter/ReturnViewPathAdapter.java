@@ -1,7 +1,6 @@
 package frontHandler.adapter;
 
 import dto.HttpRequest;
-import frontHandler.HandlerAdapter;
 import frontHandler.ModelView;
 import handler.ReturnViewPathHandler;
 import org.slf4j.Logger;

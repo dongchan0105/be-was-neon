@@ -1,6 +1,7 @@
-package frontHandler;
+package frontHandler.adapter;
 
 import dto.HttpRequest;
+import frontHandler.ModelView;
 
 import java.io.IOException;
 

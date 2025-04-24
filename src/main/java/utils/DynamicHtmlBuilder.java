@@ -1,5 +1,6 @@
 package utils;
 
+import model.Article;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,23 +10,26 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class DynamicHtmlBuilder {
     private static final String STATIC_DIR = "src/main/resources/static";
     private static final Logger log = LoggerFactory.getLogger(DynamicHtmlBuilder.class);
 
-    public static byte[] buildIndexPage(User user) throws IOException {
+    public static byte[] buildIndexPage(User user, List<Article> articles) throws IOException {
         // 1. index.html 템플릿 읽기
         String template = readFile("index.html");
 
         // 2. 동적 헤더 생성
         String headerContent = buildHeader(user);
         String writeButtonContent = buildWriteButton(user);
+        String articleListContent = buildArticleList(articles);
 
         // 3. 템플릿에 동적 컨텐츠 삽입
         String html = template
                 .replace("<!-- HEADER_CONTENT -->", headerContent)
-                .replace("<!-- WRITE_BUTTON -->", writeButtonContent);
+                .replace("<!-- WRITE_BUTTON -->", writeButtonContent)
+                .replace("<!-- ARTICLE_LIST -->", articleListContent);
 
         return html.getBytes(StandardCharsets.UTF_8);
     }
@@ -67,6 +71,28 @@ public class DynamicHtmlBuilder {
 
         button.append("</div>");
         return button.toString();
+    }
+
+    private static String buildArticleList(List<Article> articles) {
+        StringBuilder list = new StringBuilder();
+
+        if (articles == null || articles.isEmpty()) {
+            list.append("<p>등록된 게시글이 없습니다.</p>");
+            return list.toString();
+        }
+
+        list.append("<ul class='article-list'>");
+        for (Article article : articles) {
+            list.append("<li class='article-item'>")
+                    .append("<a href='/article?id=").append(article.getId()).append("'>")
+                    .append("<h3>").append(escapeHtml(article.getTitle())).append("</h3>")
+                    .append("<p>").append(escapeHtml(article.getContent().substring(0, Math.min(article.getContent().length(), 100)))).append("...</p>")
+                    .append("</a>")
+                    .append("</li>");
+        }
+        list.append("</ul>");
+
+        return list.toString();
     }
 
     private static String readFile(String filename) throws IOException {

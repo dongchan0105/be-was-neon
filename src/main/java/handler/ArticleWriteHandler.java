@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static session.SessionManager.SESSION_COOKIE_NAME;
 
-public class WriteHandler implements ReturnViewPathHandler{
+public class ArticleWriteHandler implements ReturnViewPathHandler{
 
 
     @Override
@@ -20,7 +20,7 @@ public class WriteHandler implements ReturnViewPathHandler{
         Article article = ArticleService.writeArticle(writeArticleRequest);
         Database.addArticle(article);
         model.put("article", article);
-        return "redirect:/index.html";
+        return "redirect:/index";
     }
 
     private WriteArticleRequest parseQueryString(Map<String, String> paramMap) {
