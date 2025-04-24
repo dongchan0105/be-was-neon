@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DynamicHtmlBuilder {
-    private static final String STATIC_DIR = "src/main/resources/static";
+    private static final String Template_DIR = "src/main/resources/templates";
     private static final Logger log = LoggerFactory.getLogger(DynamicHtmlBuilder.class);
 
     public static byte[] buildIndexPage(User user, List<Article> articles) throws IOException {
@@ -81,23 +81,53 @@ public class DynamicHtmlBuilder {
             return list.toString();
         }
 
-        list.append("<ul class='article-list'>");
         for (Article article : articles) {
-            list.append("<li class='article-item'>")
-                    .append("<a href='/article?id=").append(article.getId()).append("'>")
-                    .append("<h3>").append(escapeHtml(article.getTitle())).append("</h3>")
-                    .append("<p>").append(escapeHtml(article.getContent().substring(0, Math.min(article.getContent().length(), 100)))).append("...</p>")
-                    .append("</a>")
-                    .append("</li>");
+            String authorName = article.getAuthor() != null ? article.getAuthor().getName() : "알 수 없음";
+
+            list.append("<div class='post'>");
+
+            // 계정 정보
+            list.append("<div class='post__account'>")
+                    .append("<img class='post__account__img' />") // 프로필 이미지 자리
+                    .append("<p class='post__account__nickname'>")
+                    .append(escapeHtml(authorName))
+                    .append("</p>")
+                    .append("</div>");
+
+            // 게시글 이미지
+            list.append("<img class='post__img' />");
+
+            // 메뉴 (좋아요, 공유, 북마크)
+            list.append("<div class='post__menu'>")
+                    .append("<ul class='post__menu__personal'>")
+                    .append("<li><button class='post__menu__btn'><img src='./img/like.svg' /></button></li>")
+                    .append("<li><button class='post__menu__btn'><img src='./img/sendLink.svg' /></button></li>")
+                    .append("</ul>")
+                    .append("<button class='post__menu__btn'><img src='./img/bookMark.svg' /></button>")
+                    .append("</div>");
+
+            // 게시글 본문 (링크 포함)
+            list.append("<a href='/article?id=").append(article.getId()).append("'>")
+                    .append("<p class='post__article'>")
+                    .append(escapeHtml(truncate(article.getContent(), 300)))
+                    .append("</p>")
+                    .append("</a>");
+
+            list.append("</div>");
         }
-        list.append("</ul>");
 
         return list.toString();
     }
 
+    // 본문 길이 제한
+    private static String truncate(String text, int maxLength) {
+        if (text == null) return "";
+        return text.length() > maxLength ? text.substring(0, maxLength) + "..." : text;
+    }
+
     private static String readFile(String filename) throws IOException {
         StringBuilder content = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new FileReader(STATIC_DIR + File.separator + filename))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(Template_DIR + File.separator + filename))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 content.append(line).append("\n");

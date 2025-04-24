@@ -66,13 +66,8 @@ public class HttpResponseParser {
             return response;
         }
 
-        // 논리 뷰 이름 처리: 확장자 없으면 .html 붙이기
-        if (!viewPath.contains(".")) {
-            viewPath += ".html";
-        }
-
         // 경로 보정
-        viewPath = URLDecoder.decode(viewPath, StandardCharsets.UTF_8.name());
+        viewPath = URLDecoder.decode(viewPath, StandardCharsets.UTF_8);
         File file = new File(STATIC_DIRECTORY + File.separator + viewPath.replace("/", File.separator));
         log.debug("File path: {}", file.getAbsolutePath());
 
@@ -87,31 +82,18 @@ public class HttpResponseParser {
 
         // 파일 읽기 (java.io 방식)
         StringBuilder htmlBuilder = new StringBuilder();
-        BufferedReader reader = null;
 
-        try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 htmlBuilder.append(line).append("\n");
             }
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
-
-        // 모델 데이터로 ${key} 치환
-        String html = htmlBuilder.toString();
-        for (Map.Entry<String, Object> entry : model.entrySet()) {
-            String key = "${" + entry.getKey() + "}";
-            html = html.replace(key, entry.getValue().toString());
         }
 
         response.setStatusCode(200);
         response.setStatusText("OK");
         response.setContentType(StaticRequestHandler.determineContentType(file));
-        response.setBody(html.getBytes(StandardCharsets.UTF_8));
+        response.setBody(htmlBuilder.toString().getBytes(StandardCharsets.UTF_8));
 
         if (model.containsKey(SESSION_COOKIE_NAME)) {
             response.getCookies().put(SESSION_COOKIE_NAME, model.get(SESSION_COOKIE_NAME).toString());
