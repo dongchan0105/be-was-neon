@@ -28,7 +28,6 @@ public class ReturnViewPathAdapter implements HandlerAdapter {
 
         // 1. 파라미터 맵 복사
         Map<String, String> paramMap = new HashMap<>(request.params());
-        // multipart 파일 아이템도 필요하다면 fileItems 맵을 직접 사용 가능합니다
 
         // 세션 쿠키 추가
         paramMap.put(SESSION_COOKIE_NAME,
