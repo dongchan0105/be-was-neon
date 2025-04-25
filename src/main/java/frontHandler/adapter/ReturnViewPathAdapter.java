@@ -23,14 +23,17 @@ public class ReturnViewPathAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelView handle(HttpRequest request,Object handler)  {
-
+    public ModelView handle(HttpRequest request, Object handler) {
         ReturnViewPathHandler controller = (ReturnViewPathHandler) handler;
 
-        // 1. 파라미터 맵 생성
-        Map<String, String> paramMap = createParamMap(request.method(), request.queryString(), request.body());
-        paramMap.put(SESSION_COOKIE_NAME,request.cookies().getOrDefault(SESSION_COOKIE_NAME,"no-cookie"));
-        log.info("check cookieValue = {} ", paramMap.get(SESSION_COOKIE_NAME));
+        // 1. 파라미터 맵 복사
+        Map<String, String> paramMap = new HashMap<>(request.params());
+        // multipart 파일 아이템도 필요하다면 fileItems 맵을 직접 사용 가능합니다
+
+        // 세션 쿠키 추가
+        paramMap.put(SESSION_COOKIE_NAME,
+                request.cookies().getOrDefault(SESSION_COOKIE_NAME, "no-cookie"));
+        log.info("check cookieValue = {}", paramMap.get(SESSION_COOKIE_NAME));
 
         // 2. 모델 객체 생성
         Map<String, Object> model = new HashMap<>();
@@ -40,7 +43,6 @@ public class ReturnViewPathAdapter implements HandlerAdapter {
 
         ModelView mv = new ModelView(viewName);
         mv.setModel(model);
-
         return mv;
     }
 

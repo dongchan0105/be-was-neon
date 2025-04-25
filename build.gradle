@@ -10,11 +10,21 @@ repositories {
 }
 
 dependencies {
+    // 파일 업로드 파싱용
+    implementation 'commons-fileupload:commons-fileupload:1.4'
+    // FileUpload 내부적으로 사용하는 Commons IO
+    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+
+    // 컴파일 시점에만 필요한 서블릿 API
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-
     implementation 'ch.qos.logback:logback-classic:1.2.3'
     testImplementation 'org.assertj:assertj-core:3.16.1'
+
 }
 
 java {
