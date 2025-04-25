@@ -14,7 +14,8 @@
     </header>
     <div class="page">
         <h2 class="page-title">글쓰기</h2>
-        <form method="POST" action="/write">
+        <!-- enctype 추가 -->
+        <form method="POST" action="/write" enctype="multipart/form-data">
             <div class="textfield textfield_size_s">
                 <label for="title" class="title_textfield">제목</label>
                 <input
@@ -35,6 +36,17 @@
                         placeholder="내용을 입력해주세요"
                         required
                 ></textarea>
+            </div>
+            <!-- 이미지 업로드 필드 추가 -->
+            <div class="textfield textfield_size_s">
+                <label for="image" class="title_textfield">이미지</label>
+                <input
+                        id="image"
+                        class="input_textfield"
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                />
             </div>
             <button class="btn btn_contained btn_size_m" type="submit" style="margin-top: 24px;">
                 등록하기

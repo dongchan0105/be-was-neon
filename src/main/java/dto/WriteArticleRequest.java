@@ -2,5 +2,5 @@ package dto;
 
 import model.User;
 
-public record WriteArticleRequest(String title, User author, String content) {
+public record WriteArticleRequest(String title, User author, String content,String imageUrl) {
 }
