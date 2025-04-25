@@ -39,6 +39,7 @@ public class ReturnViewPathAdapter implements HandlerAdapter {
 
         // 3. 핸들러 실행 ➔ 뷰 이름 반환
         String viewName = controller.process(paramMap, model);
+        log.info("model = {}, viewName = {} PLZ!!!", model, viewName);
 
         ModelView mv = new ModelView(viewName);
         mv.setModel(model);

@@ -52,6 +52,8 @@ public class HttpResponseParser {
             User user = (User) model.get("user");
             List<Article> articles = Database.findAllArticle();
 
+            log.debug("user = {}", user);
+
 
             byte[] htmlBody = DynamicHtmlBuilder.buildIndexPage(user,articles);
             response.setStatusCode(200);
