@@ -48,7 +48,7 @@ public class HttpRequestParser {
         while ((line = reader.readLine()) != null && !line.isEmpty()) {
             int idx = line.indexOf(':');
             if (idx > 0) {
-                String name = line.substring(0, idx).trim();
+                String name = line.substring(0, idx).trim().toLowerCase();
                 String value = line.substring(idx + 1).trim();
                 headers.put(name, value);
             }
