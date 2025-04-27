@@ -1,6 +1,5 @@
 package utils.parser;
 
-import db.Database;
 import dto.HttpResponse;
 import frontHandler.ModelView;
 import handler.StaticRequestHandler;
@@ -8,6 +7,7 @@ import model.Article;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import repository.ArticleRepository;
 import utils.DynamicHtmlBuilder;
 
 import java.io.*;
@@ -23,6 +23,7 @@ public class HttpResponseParser {
 
     private static final String STATIC_DIRECTORY = "src/main/resources/static";
     private static final Logger log = LoggerFactory.getLogger(HttpResponseParser.class);
+    private static final ArticleRepository articleRepository = new ArticleRepository();
 
     public static HttpResponse makeHttpResponse(ModelView mv) throws IOException {
         String viewPath = mv.getViewName();
@@ -50,7 +51,7 @@ public class HttpResponseParser {
 
             // 모델과 article 정보확인
             User user = (User) model.get("user");
-            List<Article> articles = Database.findAllArticle();
+            List<Article> articles = articleRepository.findAll(); // 계층이 안맞는거 같은데 한번 더 고민해보자
 
             log.debug("user = {}", user);
 

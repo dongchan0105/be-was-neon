@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.h2database:h2:2.1.214'
+    implementation 'com.h2database:h2:2.3.232'
     implementation 'org.slf4j:slf4j-api:1.7.36'
     // 파일 업로드 파싱용
     implementation 'commons-fileupload:commons-fileupload:1.4'

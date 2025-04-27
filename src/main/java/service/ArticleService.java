@@ -1,12 +1,14 @@
 package service;
 
-import db.Database;
 import dto.WriteArticleRequest;
 import model.Article;
+import repository.ArticleRepository;
 
 import java.util.List;
 
 public class ArticleService {
+
+    private static final ArticleRepository repository = new ArticleRepository();
 
     public static Article writeArticle(WriteArticleRequest request) {
         Article article;
@@ -24,16 +26,16 @@ public class ArticleService {
                     request.content()
             );
         }
-        Database.addArticle(article);
+        repository.save(article);
         return article;
     }
 
 
     public static Article findArticleById(int id){
-       return  Database.findArticleById(id);
+        return repository.findById(id);
     }
 
     public static List<Article> findAllArticle(){
-        return Database.findAllArticle();
+        return repository.findAll();
     }
 }

@@ -27,6 +27,35 @@ public class ArticleRepository {
         }
     }
 
+    public Article findById(int id) {
+        String sql = "SELECT a.id, a.title, a.content, a.image_url, u.user_id, u.name, u.password, u.email " +
+                "FROM articles a JOIN users u ON a.author_id = u.user_id WHERE a.id = ?";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    User author = new User(
+                            rs.getString("user_id"),
+                            rs.getString("password"),
+                            rs.getString("name"),
+                            rs.getString("email")
+                    );
+                    return new Article(
+                            rs.getString("title"),
+                            author,
+                            rs.getString("content"),
+                            rs.getString("image_url")
+                    );
+                }
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public List<Article> findAll() {
         String sql = "SELECT a.id, a.title, a.content, a.image_url, u.user_id, u.name, u.password, u.email " +
                 "FROM articles a JOIN users u ON a.author_id = u.user_id";

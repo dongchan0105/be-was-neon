@@ -6,6 +6,8 @@ import utils.DBUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserRepository {
 
@@ -43,5 +45,26 @@ public class UserRepository {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<User> findAll() {
+        String sql = "SELECT * FROM users";
+        List<User> users = new ArrayList<>();
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                User user = new User(
+                        rs.getString("user_id"),
+                        rs.getString("password"),
+                        rs.getString("name"),
+                        rs.getString("email")
+                );
+                users.add(user);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return users;
     }
 }

@@ -1,26 +1,26 @@
 package service;
 
-import db.Database;
 import dto.UserCreateRequest;
 import model.User;
+import repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserService {
 
+    private static final UserRepository userRepository = new UserRepository();
 
     public static User createUser(UserCreateRequest request) {
 
         User user = new User(request.userId(), request.password(), request.name(), request.email());
 
-        Database.addUser(user);
+        userRepository.save(user);
 
         return user;
     }
 
     public static List<User> getAllUsers() {
-       return new ArrayList<>(Database.findAllUser());
+       return userRepository.findAll();
     }
 
 

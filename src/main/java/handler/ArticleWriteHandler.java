@@ -2,7 +2,6 @@ package handler;
 
 import dto.WriteArticleRequest;
 import org.apache.commons.fileupload.FileItem;
-import db.Database;
 import model.Article;
 import model.User;
 import service.ArticleService;
@@ -47,7 +46,6 @@ public class ArticleWriteHandler implements ReturnViewPathHandler {
 
         // 비즈니스 로직 및 저장
         Article article = ArticleService.writeArticle(req);
-        Database.addArticle(article);
 
         // 모델에 결과 담기
         model.put("article", article);
