@@ -1,5 +1,11 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+application{
+    mainClass = 'webserver.WebServer'
 }
 
 group 'codesquad'
@@ -10,6 +16,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.h2database:h2:2.1.214'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
     // 파일 업로드 파싱용
     implementation 'commons-fileupload:commons-fileupload:1.4'
     // FileUpload 내부적으로 사용하는 Commons IO

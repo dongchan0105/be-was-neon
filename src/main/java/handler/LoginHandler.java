@@ -20,9 +20,7 @@ public class LoginHandler implements ReturnViewPathHandler {
     public String process(Map<String, String> paramMap, Map<String, Object> model) {
         // 1. 파라미터 추출
         String userId = paramMap.getOrDefault("userId", "");
-        logger.info("userId = {}", userId);
         String password = paramMap.getOrDefault("password", "");
-        logger.info("password = {}", password);
 
         try {
             // 2. 로그인 시도
