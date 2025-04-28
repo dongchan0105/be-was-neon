@@ -47,6 +47,7 @@ public class FrontHandlerContainer implements Runnable {
         handlerMappingMap.put(new RouteKey("/", "GET"), new IndexHandler());
         handlerMappingMap.put(new RouteKey("/index", "GET"), new IndexHandler());
         handlerMappingMap.put(new RouteKey("/write","POST"),new ArticleWriteHandler());
+        handlerMappingMap.put(new RouteKey("/logout","GET"),new LogoutHandler());
     }
 
     private void initHandlerAdapters() {

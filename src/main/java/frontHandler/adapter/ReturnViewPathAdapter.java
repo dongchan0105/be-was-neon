@@ -40,9 +40,6 @@ public class ReturnViewPathAdapter implements HandlerAdapter {
         // 2. 모델 객체 생성
         Map<String, Object> model = new HashMap<>();
 
-        // ── 여기서 multipart로 넘어온 파일 아이템도 모델에 담아줍니다.
-        //model.put("fileItems", request.fileItems());
-
         // 3. 핸들러 실행 ➔ 뷰 이름 반환
         String viewName = controller.process(paramMap, model);
         log.info("model = {}, viewName = {}", model, viewName);
