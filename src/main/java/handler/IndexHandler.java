@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static session.SessionManager.SESSION_COOKIE_NAME;
 
-public class IndexHandler implements ReturnViewPathHandler{
+public class IndexHandler implements ReturnViewPathHandler<Map<String, String>>{
 
     private static final Logger log = LoggerFactory.getLogger(IndexHandler.class);
 

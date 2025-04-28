@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static session.SessionManager.SESSION_COOKIE_NAME;
 
-public class UserListHandler implements ReturnViewPathHandler {
+public class UserListHandler implements ReturnViewPathHandler<Map<String, String>> {
 
     @Override
     public String process(Map<String, String> paramMap, Map<String, Object> model) {

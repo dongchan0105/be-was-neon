@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static domain.error.HttpClientError.*;
 
-public class StaticRequestHandler implements ReturnViewPathHandler {
+public class StaticRequestHandler implements ReturnViewPathHandler<Map<String, String>> {
 
     private static final Logger logger = LoggerFactory.getLogger(StaticRequestHandler.class);
     private static final String STATIC_DIRECTORY = "src/main/resources/static";
@@ -24,14 +24,12 @@ public class StaticRequestHandler implements ReturnViewPathHandler {
         return "HELLO WORLD";
     }
 
-    public void handleStaticRequest(String path, OutputStream out) throws IOException {
+    public void handleStaticRequest(String path, OutputStream out) {
         if (path.endsWith("/")) {
             path += "index.html";
-        } else if ("/".equals(path)) {
-            path = "/index.html";
         }
 
-        path = URLDecoder.decode(path, StandardCharsets.UTF_8.name());
+        path = URLDecoder.decode(path, StandardCharsets.UTF_8);
         File file = new File(STATIC_DIRECTORY + File.separator + path.replace("/", File.separator));
 
         try {

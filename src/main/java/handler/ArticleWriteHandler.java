@@ -15,21 +15,23 @@ import java.util.Map;
 
 import static session.SessionManager.SESSION_COOKIE_NAME;
 
-public class ArticleWriteHandler implements ReturnViewPathHandler {
+public class ArticleWriteHandler implements ReturnViewPathHandler<Map<String, Object>> {
+
     private static final Logger log = LoggerFactory.getLogger(ArticleWriteHandler.class);
 
     @Override
-    public String process(Map<String, String> paramMap, Map<String, Object> model) {
+    public String process(Map<String, Object> paramMap, Map<String, Object> model) {
+        log.info("paramMapDATA PLZ = {}", paramMap);
         // 기본 파라미터
-        String title = paramMap.getOrDefault("title", "");
-        String content = paramMap.getOrDefault("content", "");
-        String sessionId = paramMap.getOrDefault(SESSION_COOKIE_NAME, "");
+        String title = paramMap.getOrDefault("title", "").toString();
+        String content = paramMap.getOrDefault("content", "").toString();
+        String sessionId = paramMap.getOrDefault(SESSION_COOKIE_NAME, "").toString();
         User user = SessionManager.getUser(sessionId);
 
         // 이미지 업로드 처리
-        String imageUrl = "";
+        String imageUrl = null;
         @SuppressWarnings("unchecked")//케스팅 할때 경고 무시하기
-        Map<String, FileItem> fileItems = (Map<String, FileItem>) model.get("fileItems");
+        Map<String, FileItem> fileItems = (Map<String, FileItem>) paramMap.get("fileItems");
         if (fileItems != null && fileItems.containsKey("image")) {
             FileItem imageItem = fileItems.get("image");
             if (imageItem.getSize() > 0) {

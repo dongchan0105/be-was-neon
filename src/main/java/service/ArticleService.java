@@ -11,6 +11,7 @@ public class ArticleService {
     private static final ArticleRepository repository = new ArticleRepository();
 
     public static Article writeArticle(WriteArticleRequest request) {
+
         Article article;
         if (request.imageUrl() != null && !request.imageUrl().isBlank()) {
             article = new Article(

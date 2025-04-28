@@ -18,19 +18,16 @@ import java.util.Map;
 
 import static domain.error.HttpClientError.findByStatusCode;
 
-/**
- * HTTP 요청 파싱기 (multipart/form-data 지원)
- */
 public class HttpRequestParser {
 
     private static final Logger log = LoggerFactory.getLogger(HttpRequestParser.class);
 
-    public static HttpRequest parse(InputStream input) throws IOException, ClientException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
+    public static HttpRequest parse(InputStream input) throws Exception {
+        BufferedInputStream bufferedInput = new BufferedInputStream(input);
 
-        // 1. Request Line 파싱
-        String requestLine = reader.readLine();
-        if (requestLine == null) {
+        // 1. Request Line 직접 읽기
+        String requestLine = readLine(bufferedInput);
+        if (requestLine == null || requestLine.isEmpty()) {
             throw new ClientException(findByStatusCode(400));
         }
         String[] requestParts = requestLine.split(" ");
@@ -40,24 +37,20 @@ public class HttpRequestParser {
         String method = requestParts[0];
         String fullPath = requestParts[1];
 
-        // 2. Header 파싱
-        Map<String, String> headers = parseHeaders(reader);
+        // 2. Header 직접 읽기
+        Map<String, String> headers = parseHeaders(bufferedInput);
 
-        // 3. Cookie 파싱
+        // 3. Cookie
         Map<String, String> cookies = parseCookies(headers);
 
-        // 4. Body 파싱
+        // 4. Body 처리
         Map<String, String> paramMap = new HashMap<>();
         Map<String, FileItem> fileItems = new HashMap<>();
 
-        if (ServletFileUpload.isMultipartContent(new SimpleRequestContext(headers, input))) {
-            try {
-                parseMultipart(input, headers, paramMap, fileItems);
-            } catch (Exception e) {
-                log.error("Multipart parsing error", e);
-            }
+        if (ServletFileUpload.isMultipartContent(new SimpleRequestContext(headers, bufferedInput))) {
+            parseMultipart(bufferedInput, headers, paramMap, fileItems);
         } else {
-            parseUrlEncodedForm(method, fullPath, reader, headers, paramMap);
+            parseUrlEncodedForm(method, fullPath, bufferedInput, headers, paramMap);
         }
 
         // 5. HttpRequest 객체 생성
@@ -71,10 +64,25 @@ public class HttpRequestParser {
         );
     }
 
-    private static Map<String, String> parseHeaders(BufferedReader reader) throws IOException {
+    private static String readLine(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int prev = -1, curr;
+        while ((curr = inputStream.read()) != -1) {
+            if (prev == '\r' && curr == '\n') {
+                break;
+            }
+            if (prev != -1) {
+                baos.write(prev);
+            }
+            prev = curr;
+        }
+        return baos.toString(StandardCharsets.UTF_8).trim();
+    }
+
+    private static Map<String, String> parseHeaders(InputStream inputStream) throws IOException {
         Map<String, String> headers = new HashMap<>();
         String line;
-        while ((line = reader.readLine()) != null && !line.isEmpty()) {
+        while (!(line = readLine(inputStream)).isEmpty()) {
             int idx = line.indexOf(':');
             if (idx > 0) {
                 String name = line.substring(0, idx).trim().toLowerCase();
@@ -135,18 +143,16 @@ public class HttpRequestParser {
         return fileItem;
     }
 
-    private static void parseUrlEncodedForm(String method, String fullPath, BufferedReader reader, Map<String, String> headers, Map<String, String> paramMap) throws IOException {
+    private static void parseUrlEncodedForm(String method, String fullPath, InputStream input, Map<String, String> headers, Map<String, String> paramMap) throws IOException {
         if ("GET".equalsIgnoreCase(method)) {
             int idx = fullPath.indexOf('?');
             if (idx >= 0) {
                 parseKeyValuePairs(fullPath.substring(idx + 1), paramMap);
             }
-        }
-        if ("POST".equalsIgnoreCase(method) && headers.containsKey("content-length")) {
+        } else if ("POST".equalsIgnoreCase(method) && headers.containsKey("content-length")) {
             int length = Integer.parseInt(headers.get("content-length"));
-            char[] bodyChars = new char[length];
-            reader.read(bodyChars, 0, length);
-            String body = new String(bodyChars);
+            byte[] bodyBytes = input.readNBytes(length);
+            String body = new String(bodyBytes, StandardCharsets.UTF_8);
             parseKeyValuePairs(body, paramMap);
         }
     }
@@ -156,8 +162,8 @@ public class HttpRequestParser {
             String[] kv = pair.split("=", 2);
             if (kv.length == 2) {
                 try {
-                    String key = URLDecoder.decode(kv[0], "UTF-8");
-                    String value = URLDecoder.decode(kv[1], "UTF-8");
+                    String key = URLDecoder.decode(kv[0], StandardCharsets.UTF_8.name());
+                    String value = URLDecoder.decode(kv[1], StandardCharsets.UTF_8.name());
                     paramMap.put(key, value);
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException(e);

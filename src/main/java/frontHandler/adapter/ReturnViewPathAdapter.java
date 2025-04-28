@@ -27,7 +27,7 @@ public class ReturnViewPathAdapter implements HandlerAdapter {
         ReturnViewPathHandler controller = (ReturnViewPathHandler) handler;
 
         // 1. 파라미터 맵 복사
-        Map<String, String> paramMap = new HashMap<>(request.params());
+        Map<String, Object> paramMap = new HashMap<>(request.params());
 
         // 세션 쿠키 추가
         paramMap.put(SESSION_COOKIE_NAME,
@@ -35,7 +35,7 @@ public class ReturnViewPathAdapter implements HandlerAdapter {
         log.info("check cookieValue = {}", paramMap.get(SESSION_COOKIE_NAME));
 
         //-multipart data들 paramMap에 담기
-        paramMap.put("fileItems", request.fileItems().toString());
+        paramMap.put("fileItems", request.fileItems());
 
         // 2. 모델 객체 생성
         Map<String, Object> model = new HashMap<>();

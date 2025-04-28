@@ -69,6 +69,8 @@ public class FrontHandlerContainer implements Runnable {
 
         } catch (IOException e) {
             logger.info("IOException occur");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

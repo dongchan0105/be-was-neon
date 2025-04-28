@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static domain.error.HttpClientError.BAD_REQUEST;
 
-public class UserRequestHandler implements ReturnViewPathHandler {
+public class UserRequestHandler implements ReturnViewPathHandler<Map<String, String>> {
 
     private static final Logger logger = LoggerFactory.getLogger(UserRequestHandler.class);
 

@@ -2,11 +2,11 @@ package handler;
 
 import java.util.Map;
 
-public interface ReturnViewPathHandler {
+public interface ReturnViewPathHandler<T> {
     /**
      * @param paramMap
      * @param model
      * @return viewName
      */
-    String process(Map<String, String> paramMap, Map<String, Object> model);
+    String process(T paramMap, Map<String, Object> model);
 }

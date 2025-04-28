@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static session.SessionManager.SESSION_COOKIE_NAME;
 
-public class LoginHandler implements ReturnViewPathHandler {
+public class LoginHandler implements ReturnViewPathHandler<Map<String, String>> {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginHandler.class);
 
