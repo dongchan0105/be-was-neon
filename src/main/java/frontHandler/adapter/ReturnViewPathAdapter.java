@@ -34,11 +34,14 @@ public class ReturnViewPathAdapter implements HandlerAdapter {
                 request.cookies().getOrDefault(SESSION_COOKIE_NAME, "no-cookie"));
         log.info("check cookieValue = {}", paramMap.get(SESSION_COOKIE_NAME));
 
+        //-multipart data들 paramMap에 담기
+        paramMap.put("fileItems", request.fileItems().toString());
+
         // 2. 모델 객체 생성
         Map<String, Object> model = new HashMap<>();
 
         // ── 여기서 multipart로 넘어온 파일 아이템도 모델에 담아줍니다.
-        model.put("fileItems", request.fileItems());
+        //model.put("fileItems", request.fileItems());
 
         // 3. 핸들러 실행 ➔ 뷰 이름 반환
         String viewName = controller.process(paramMap, model);
@@ -49,40 +52,5 @@ public class ReturnViewPathAdapter implements HandlerAdapter {
         return mv;
     }
 
-
-    private Map<String, String> createParamMap(String method,
-                                               String queryString,
-                                               String body) {
-        Map<String, String> paramMap = new HashMap<>();
-
-        // 쿼리 스트링 파싱 (GET)
-        if (queryString != null) {
-            parseKeyValuePairs(queryString, paramMap);
-        }
-
-        // 본문 파싱 (POST)
-        if ("POST".equalsIgnoreCase(method) && body != null) {
-            parseKeyValuePairs(body, paramMap);
-        }
-
-        return paramMap;
-    }
-
-    private void parseKeyValuePairs(String source,
-                                    Map<String, String> paramMap) {
-        String[] pairs = source.split("&");
-        for (String pair : pairs) {
-            String[] keyValue = pair.split("=", 2);
-            if (keyValue.length == 2) {
-                try {
-                    String key = URLDecoder.decode(keyValue[0], "UTF-8");
-                    String value = URLDecoder.decode(keyValue[1], "UTF-8");
-                    paramMap.put(key, value);
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
 }
 

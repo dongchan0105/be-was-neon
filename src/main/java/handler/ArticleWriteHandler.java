@@ -28,7 +28,7 @@ public class ArticleWriteHandler implements ReturnViewPathHandler {
 
         // 이미지 업로드 처리
         String imageUrl = "";
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked")//케스팅 할때 경고 무시하기
         Map<String, FileItem> fileItems = (Map<String, FileItem>) model.get("fileItems");
         if (fileItems != null && fileItems.containsKey("image")) {
             FileItem imageItem = fileItems.get("image");

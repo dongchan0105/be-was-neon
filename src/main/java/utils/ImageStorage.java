@@ -30,7 +30,7 @@ public class ImageStorage {
             ext = originalName.substring(idx);
         }
         // 고유 파일명 생성
-        String newName = UUID.randomUUID().toString() + ext;
+        String newName = UUID.randomUUID() + ext;
 
         // 디렉터리 생성
         Path uploadPath = Paths.get(UPLOAD_DIR);
