@@ -6,14 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DynamicHtmlBuilder {
-    private static final String TEMPLATE_DIR = "src/main/resources/templates";
     private static final Logger log = LoggerFactory.getLogger(DynamicHtmlBuilder.class);
 
     /**
@@ -128,11 +127,18 @@ public class DynamicHtmlBuilder {
     }
 
     private static String readFile(String filename) throws IOException {
+        InputStream inputStream = DynamicHtmlBuilder.class.getClassLoader().getResourceAsStream("templates/" + filename);
+
+        if (inputStream == null) {
+            throw new IOException("Template file not found: templates/" + filename);
+        }
+
         StringBuilder sb = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(
-                new FileReader(TEMPLATE_DIR + File.separator + filename))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String line;
-            while ((line = br.readLine()) != null) sb.append(line).append("\n");
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
         }
         return sb.toString();
     }

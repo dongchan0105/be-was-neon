@@ -18,8 +18,10 @@ import java.util.Map;
 
 import static session.SessionManager.SESSION_COOKIE_NAME;
 
+
 public class HttpResponseParser {
 
+    private static final String STATIC_DIRECTORY = "src/main/resources/static";
     private static final Logger log = LoggerFactory.getLogger(HttpResponseParser.class);
     private static final ArticleRepository articleRepository = new ArticleRepository();
 
@@ -47,12 +49,14 @@ public class HttpResponseParser {
         if ("dynamic/index".equals(viewPath)) {
             log.debug("viewPath = {}", viewPath);
 
+            // 모델과 article 정보확인
             User user = (User) model.get("user");
-            List<Article> articles = articleRepository.findAll();
+            List<Article> articles = articleRepository.findAll(); // 계층이 안맞는거 같은데 한번 더 고민해보자
 
             log.debug("user = {}", user);
 
-            byte[] htmlBody = DynamicHtmlBuilder.buildIndexPage(user, articles);
+
+            byte[] htmlBody = DynamicHtmlBuilder.buildIndexPage(user,articles);
             response.setStatusCode(200);
             response.setStatusText("OK");
             response.setContentType("text/html;charset=utf-8");
@@ -67,12 +71,11 @@ public class HttpResponseParser {
 
         // 경로 보정
         viewPath = URLDecoder.decode(viewPath, StandardCharsets.UTF_8);
+        File file = new File(STATIC_DIRECTORY + File.separator + viewPath.replace("/", File.separator));
+        log.debug("File path: {}", file.getAbsolutePath());
 
-        // JAR 안에서도 동작하는 방식으로 수정
-        InputStream inputStream = HttpResponseParser.class.getClassLoader().getResourceAsStream("static/" + viewPath);
-
-        if (inputStream == null) {
-            log.warn("Requested file not found: {}", viewPath);
+        // 파일이 없거나 디렉터리면 404 처리
+        if (!file.exists() || file.isDirectory()) {
             response.setStatusCode(404);
             response.setStatusText("Not Found");
             response.setContentType("text/html;charset=utf-8");
@@ -80,9 +83,10 @@ public class HttpResponseParser {
             return response;
         }
 
-        // 파일 읽기
+        // 파일 읽기 (java.io 방식)
         StringBuilder htmlBuilder = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 htmlBuilder.append(line).append("\n");
@@ -91,7 +95,7 @@ public class HttpResponseParser {
 
         response.setStatusCode(200);
         response.setStatusText("OK");
-        response.setContentType(StaticRequestHandler.determineContentType(viewPath));
+        response.setContentType(StaticRequestHandler.determineContentType(file));
         response.setBody(htmlBuilder.toString().getBytes(StandardCharsets.UTF_8));
 
         if (model.containsKey(SESSION_COOKIE_NAME)) {
@@ -101,3 +105,4 @@ public class HttpResponseParser {
         return response;
     }
 }
+
